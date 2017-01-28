@@ -1,0 +1,65 @@
+---
+title: "mlearn310_hw1_3"
+output: pdf_document
+---
+
+```{r read_wine, echo=TRUE}
+ wines = read.csv(url("https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data"))
+colnames(wines) <- c("Alcohol" ,"Malic acid" ,"Ash" ,"Alcalinity of ash" ,"Magnesium" ,"Total phenols" ,"Flavanoids" ,"Nonflavanoid phenols" ,"Proanthocyanins" ,"Color intensity" ,"Hue" ,"OD280/OD315 of diluted wines" ,"Proline")
+```
+
+### 1.	Cumulative Frequency Distribution
+```{r cum-freq-dist, echo=TRUE}
+wines_magnesium = wines$Magnesium
+breaks = seq(10, 30, by=2.5) 
+wines_magnesium.cut = cut(wines_magnesium, breaks, right=FALSE) 
+wines_magnesium.freq = table(wines_magnesium.cut) 
+wines_magnesium.cumfreq = cumsum(wines_magnesium.freq) 
+wines_magnesium.cumfreq
+cbind(wines_magnesium.cumfreq)
+```
+
+
+### 2.	Cumulative Relative Frequency Graph
+```{r cum-rel-freq, echo=TRUE}
+wines_magnesium = wines$Magnesium
+breaks = seq(10, 30, by=2.5) 
+wines_magnesium.cut = cut(wines_magnesium, breaks, right=FALSE) 
+wines_magnesium.freq = table(wines_magnesium.cut) 
+wines_magnesium.cumfreq = cumsum(wines_magnesium.freq) 
+wines_magnesium.cumrelfreq = wines_magnesium.cumfreq / nrow(faithful) 
+
+cumrelfreq0 = c(0, wines_magnesium.cumrelfreq) 
+plot(breaks, cumrelfreq0, main="Magnesium Content in Wine", xlab="Magnesium Level", ylab="Cumulative Magnesium Level") 
+lines(breaks, cumrelfreq0) 
+```
+
+
+### 3.	Stem-and-Leaf Plot
+
+```{r stem-leaf, echo=TRUE}
+stem(wines$Magnesium)
+```
+
+
+### 4.	Box Plot
+```{r box-plot, echo=TRUE}
+boxplot(Hue~Ash,data=wines, main="Hue vs Ash",xlab="Ash", ylab="Hue")
+```
+
+### 5.	Standard Deviation
+```{r standard-deviation, echo=TRUE}
+sapply(wines, function(cl) list(sds=sd(cl,na.rm=TRUE)))
+```
+
+
+### 6.	Covariance
+```{r covraince, echo=TRUE}
+cov(wines[sapply(wines, is.numeric)])
+```
+
+
+### 7.	Correlation Coefficient
+```{r correlation, echo=TRUE}
+cor(wines[sapply(wines, is.numeric)])
+```

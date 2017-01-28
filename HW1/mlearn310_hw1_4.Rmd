@@ -7,22 +7,143 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## MLEARN310 HomeWork-1 ProblemSet-4
+## 1.	Loading the Data into R
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r load_mtcars}
+data(mtcars)
 ```
 
-## Including Plots
+## 2.1 Data Summarization
 
-You can also embed plots, for example:
+####  2.1.1 Data Summarization - Stats
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r summary, echo=FALSE}
+summary(mtcars)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+###  2.1.2 Data Summarization - Structure
+``` {r structure, echo=FALSE}
+str(mtcars)
+```
+  
+###  2.1.3 Data Summarization - Corrleation
+
+``` {r correlation, echo=FALSE}
+cor_matrix = cor(mtcars)
+cor_matrix
+```
+
+mpg has a strong -ve correlation with cyl , disp, hp and wt and drat ( < -0.5 )
+
+disp has a strong +ve correlation with cyl, hp and wt ( > 0.5 )
+
+drat has a strong -ve correlation with disp and wt ( < -0.5 )
+
+qsec has a strong +ve correlation with vs and mpg ( > 0.5 )
+
+am has a strong -ve correlation with cyl, disp, wt  ( < -0.5 )
+
+am has a strong +ve correlation with gear and drat ( > 0.5 )
+
+carb has a strong +ve correlation with hp and cyl ( > 0.5 )
+
+\newpage
+###  2.2 Data Visualization
+
+
+```{r visualization, echo=FALSE}
+
+boxplot(mtcars$mpg,ylab='mpg')
+rug(jitter(mtcars$mpg),side=3)
+abline(h=mean(mtcars$mpg4,na.rm=T),lty=2)
+
+library(lattice)
+bwplot(mpg ~ cyl, data=mtcars,ylab='mpg',xlab='cyl')
+bwplot(mpg ~ hp, data=mtcars,ylab='mpg',xlab='hp')
+bwplot(mpg ~ wt, data=mtcars,ylab='mpg',xlab='wt')
+```
+
+\newpage
+
+## 3.	Multiple Linear Regression
+
+```{r fit0, echo=TRUE}
+
+fit0 <- lm( mpg ~ as.factor(am), data=mtcars)
+summary(fit0)
+res0 = residuals(fit0)
+plot(jitter(res0)~jitter(mpg), ylab="Residuals", xlab="mpg", data=mtcars)
+abline(0,0)
+```
+**Multiple R-squared:  0.3598**
+\newpage
+```{r fit1, echo=TRUE}
+
+fit1 <- lm( mpg ~ hp + wt + disp + gear, data=mtcars)
+summary(fit1)
+res1 = residuals(fit1)
+plot(jitter(res1)~jitter(mpg), ylab="Residuals", xlab="mpg", data=mtcars)
+abline(0,0)
+```
+  
+**Multiple R-squared:  0.8371**
+\newpage
+```{r fit2, echo=TRUE}
+fit2 <- lm( mpg ~ hp + wt + drat + as.factor(am), data=mtcars)
+summary(fit2)
+res2 = residuals(fit2)
+plot(jitter(res2)~jitter(mpg), ylab="Residuals", xlab="mpg", data=mtcars)
+abline(0,0)
+```
+  
+__Multiple R-squared:  0.8428__
+  
+```{r fit3, echo=TRUE}
+fit3 <- lm( mpg ~ ., data=mtcars)
+summary(fit3)
+res3 = residuals(fit3)
+plot(jitter(res3)~jitter(mpg), ylab="Residuals", xlab="mpg", data=mtcars)
+abline(0,0)
+```
+  
+__Multiple R-squared:  0.869__
+
+#### Anova
+```{r anova, echo=TRUE}
+anova(fit1, fit2)
+anova(fit2, fit3)
+```
+\newpage
+
+## 4. Regression Trees
+
+``` {r rt0, echo=TRUE}
+library(rpart)
+rt0 <- rpart(mpg ~ .,method="anova", data=mtcars)
+plotcp(rt0)
+printcp(rt0)
+summary(rt0)
+
+# create additional plots
+par(mfrow=c(1,2)) # two plots on one page
+rsq.rpart(rt0) # visualize cross-validation results 
+
+# plot tree 
+plot(rt0, uniform=TRUE,main="Classification Tree for mtcars")
+text(rt0, use.n=TRUE, all=TRUE, cex=.8)
+```
+
+``` {r rt1, echo=TRUE}
+rt1 <- rpart(mpg ~ hp + wt + drat + as.factor(am),method="anova", data=mtcars)
+plotcp(rt1)
+printcp(rt1)
+summary(rt1)
+# create additional plots
+par(mfrow=c(1,2)) # two plots on one page
+rsq.rpart(rt1) # visualize cross-validation results 
+
+# plot tree 
+plot(rt1, uniform=TRUE,main="Classification Tree for mtcars")
+text(rt1, use.n=TRUE, all=TRUE, cex=.8)
+```

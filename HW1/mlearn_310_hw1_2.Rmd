@@ -1,0 +1,64 @@
+---
+title: "mlearn310_hw1_2"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1.2.1  #1
+Black-1
+Blond - 2
+Brown - 3
+Red- 4
+```{r 1-2-1, echo=TRUE}
+hair_color = c(1, 2, 1, 1, 3, 2, 2, 2, 4, 4, 2, 3, 3, 4, 4, 4, 2, 3, 3, 3)
+hist(hair_color)
+```
+Sample proportion of blonds - 6 / 20
+
+## Exercise 1.3.1  #5
+```{r 1-3-1, echo=TRUE}
+data_1 = c(14, 117, 77, 81, 205, 25, 22, 157, 134, 69, 193, 8, 262, 0, 156, 194, 17, 100, 50, 53, 235, 29, 191, 81, 167, 29, 158, 105, 171, 2, 8, 89, 82, 11, 247, 149, 106, 61, 18, 172)
+stem(data_1)
+```
+
+## Exercise 1.3.2  #1
+```{r 1-3-2, echo=TRUE}
+weights = c(122, 146, 65, 162, 148, 155, 136, 151, 151, 153, 201, 156, 235, 157, 160, 171, 178, 197, 142, 131)
+plot(weights)
+```
+
+## Exercise 1.6.1  #1
+```{r 1-6-1, echo=TRUE}
+group1 = c(153, 150, 132, 123, 148, 146, 140, 154, 137, 112)
+group2 = c(148, 113, 69, 129, 150, 129, 157, 184, 143, 167, 141, 179, 124, 130, 166)
+boxplot(group1, group2)
+quantile(group1)
+quantile(group2)
+summary(group1)
+summary(group2)
+```
+Group1: h = 24.375, LIF = 108.875, UIF= 173.875  
+Group2: h = 48.75, LIF = 80.25, UIF = 210.25   
+There is an outlier in Group2: 69  
+There are scale difference(s).  
+There are no location difference(s).  
+
+## Exercise 1.7.1  #6
+```{r 1-7-1, echo=TRUE}
+placebo = c(64, 49, 54, 64, 97, 66, 76, 44, 71, 89, 70, 72, 71, 55, 60, 62, 46, 77, 86, 71)
+drugA= c(40, 31, 50, 48, 152, 44, 74, 38, 81, 64)
+plot(placebo)
+plot(drugA)
+placebo_median = median(placebo)
+drugA_median = median(drugA)
+placebo_median - drugA_median
+placebo_mean = mean(placebo)
+drugA_mean = mean(drugA)
+placebo_mean - drugA_mean
+```
+Palcebo is more effective.  
+
+

@@ -1,0 +1,27 @@
+---
+title: "mlearn310_hw1_1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 2.2
+a : S = {0,1,2,3,4}
+  
+b: P(Atleast 2 Red Lights) = .36 + .26 + .08 = .70
+  
+c: P(Atmost 2 Red Lights) = .05 + .25 + .36 = .66
+  
+
+
+## 2.5
+a : P(Girl Selected) = 5/15
+  
+b: P(1 boy and 1 girl) = (10/15 * 5 /14) + (5/15 * 10/14) = 100/210
+  
+
+## 3.4
+P(Hope will succedd) = (1/2 * 1/2) + (1/2 * 1/2) = 1/2
+
