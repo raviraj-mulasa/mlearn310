@@ -1,0 +1,34 @@
+---
+title: "mlearn301_hw2_7"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(VIM)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+```{r lease_data, echo=TRUE}
+lease = read.csv('/Users/ravirajmulasa/Documents/Certificate_in_MachineLearning/Advanced_Machine_Learning/Homework/HW2/Lease Prices KNN.csv')
+```
+### k = 1
+
+```{r knn_1, echo=TRUE}
+lease1 = kNN(lease, variable = c("price"), k = 1)
+lease1
+```
+
+### k = 2
+
+```{r knn_2, echo=TRUE}
+lease1 = kNN(lease, variable = c("price"), k = 2)
+lease1
+```
+
+### k = 3
+
+```{r knn_3, echo=TRUE}
+lease1 = kNN(lease, variable = c("price"), k = 3)
+lease1
+```

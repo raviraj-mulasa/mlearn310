@@ -1,0 +1,15 @@
+milk,bread
+bread,butter
+beer
+milk,bread,butter
+bread
+milk
+bread,butter,beer
+milk,bread,butter,beer
+bread,beer
+milk,bread
+milk
+beer
+milk,bread,butter
+milk,butter
+milk,bread,butter,beer
