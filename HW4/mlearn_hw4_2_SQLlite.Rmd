@@ -1,0 +1,58 @@
+---
+title: "mlearn310_hw4_2_SQLlite"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+library(sqldf)
+library(plyr)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+## Connect to Database & Tables and list columns
+```{r conn_db_create_tbl, echo=TRUE}
+db <- dbConnect(SQLite(), dbname="MlearnHW4Q3.sqlite")
+read.csv.sql("/Users/ravirajmulasa/Downloads/R-and-SQLite/data/student.csv", sql = "create table Student as SELECT * FROM file", dbname = "MlearnHW4Q3.sqlite")
+read.csv.sql("/Users/ravirajmulasa/Downloads/R-and-SQLite/data/class.csv", sql = "create table Class as SELECT * FROM file", dbname = "MlearnHW4Q3.sqlite")
+read.csv.sql("/Users/ravirajmulasa/Downloads/R-and-SQLite/data/school.csv", sql = "create table School as SELECT * FROM file", dbname = "MlearnHW4Q3.sqlite")
+dbListTables(db)
+dbListFields(db, "Student")
+dbListFields(db, "Class")
+dbListFields(db, "School")
+```
+
+## Create data frame FROM Tables
+```{r create_df_FROM_tbl, echo=TRUE}
+student <- sqldf("SELECT * FROM Student", dbname = "MlearnHW4Q3.sqlite")
+class <- sqldf("SELECT * FROM Class", dbname = "MlearnHW4Q3.sqlite")
+school <- sqldf("SELECT * FROM School", dbname = "MlearnHW4Q3.sqlite")
+summary(student)
+summary(class)
+summary(school)
+```
+
+## Draw plots
+```{r charts, echo=TRUE}
+student_class_school = sqldf(
+"SELECT 
+    s.studID
+  , s.Gender
+  , s.Test1
+  , s.Test2
+  , c.classID
+  , c.ClSize
+  , sh.schID
+  , sh.Region
+  , sh.Authority
+  , sh.SchSize 
+FROM Student s, Class c, School sh 
+WHERE s.classID = c.classID 
+  AND c.schID = sh.schID"
+, dbname = "MlearnHW4Q3.sqlite")
+boxplot(student_class_school$Test1)
+boxplot(student_class_school$Test2)
+```

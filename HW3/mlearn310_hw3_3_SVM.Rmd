@@ -1,0 +1,88 @@
+---
+title: "mlearn310_hw3_3_SVM"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=TRUE}
+library(e1071)
+library(caret)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+```{r load_data, echo=TRUE}
+mushroom=read.csv(url("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"), header = FALSE)
+names(mushroom) <- c("class", "cap-shape", "cap-surface", "cap-color", "bruises", "odor", "gill-attachment", "gill-spacing", "gill-size", "gill-color", "stalk-shape", "stalk-root", "stalk-surface-above-ring", "stalk-surface-below-ring", "stalk-color-above-ring", "stalk-color-below-ring", "veil-type", "veil-color", "ring-number", "ring-type", "spore-print-color", "population", "habitat")
+nrow(mushroom)
+mushroom = na.omit(mushroom)
+mushroom$"veil-type" = NULL
+nrow(mushroom)
+summary(mushroom)
+split = createDataPartition(y=mushroom$class, p = 0.8, list=FALSE)
+mushroom_train = mushroom[split,]
+mushroom_test = mushroom[-split,]
+```
+
+## SVM - Kernel: Linear
+
+```{r svm_kernel_linear, echo=TRUE}
+svm_model_kernel_linear = best.tune(svm, class ~., data = mushroom_train, kernel ="linear")
+svm_model_kernel_linear
+pred_mushroom_class = predict(svm_model_kernel_linear, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+## SVM - Kernel: Poly
+
+```{r svm_kernel_poly, echo=TRUE}
+svm_model_kernel_poly = best.tune(svm, class ~., data = mushroom_train, kernel ="polynomial")
+svm_model_kernel_poly
+pred_mushroom_class = predict(svm_model_kernel_poly, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+### SVM - Kernel: Radial
+
+```{r svm_kernel_radial, echo=TRUE}
+svm_model_kernel_radial = best.tune(svm, class ~., data = mushroom_train, kernel ="radial")
+svm_model_kernel_radial
+pred_mushroom_class = predict(svm_model_kernel_radial, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+# Comments: The no.of Support vectors for kernels : Linear < Radial < Polynomial
+# Comments: The Accuracy  for kernels : Linear & Radial = 1  Polynomial =  0.9951
+# Comments: The specificity for all 3 kernles : 1
+
+## SVM - Kernel: Linear, with Cost 
+
+```{r svm_kernel_linear_cost, echo=TRUE}
+svm_model_kernel_linear_cost = best.tune(svm, class ~., data = mushroom_train, kernel ="linear", ranges = list(cost = c(0.001, 0.01, 0.1, 1)))
+svm_model_kernel_linear_cost
+pred_mushroom_class = predict(svm_model_kernel_linear_cost, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+## SVM - Kernel: Poly, with Cost 
+
+```{r svm_kernel_poly_cost, echo=TRUE}
+svm_model_kernel_poly_cost = best.tune(svm, class ~., data = mushroom_train, kernel ="polynomial", ranges = list(cost = c(0.001, 0.01, 0.1, 1)))
+svm_model_kernel_poly_cost
+pred_mushroom_class = predict(svm_model_kernel_poly_cost, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+### SVM - Kernel: Radial, with Cost 
+
+```{r svm_kernel_radial_cost, echo=TRUE}
+svm_model_kernel_radial_cost = best.tune(svm, class ~., data = mushroom_train, kernel ="radial", ranges = list(cost = c(0.001, 0.01, 0.1, 1)))
+svm_model_kernel_radial_cost
+pred_mushroom_class = predict(svm_model_kernel_radial_cost, mushroom_test)
+confusionMatrix(table(pred_mushroom_class, mushroom_test$class))
+```
+
+# Comments: The no.of Support vectors for kernels : Linear < Radial < Polynomial
+# Comments: The Accuracy  for kernels : Linear &  Radial = 1  & Polynomial =  0.9951
+# Comments: The specificity for all 3 kernles : 1

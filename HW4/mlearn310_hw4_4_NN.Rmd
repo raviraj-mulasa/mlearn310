@@ -1,0 +1,58 @@
+---
+title: "mlearn310_hw4_4_NN"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(neuralnet)
+library(nnet)
+library(caret)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+## Load Wine Data
+```{r load_data, echo=TRUE}
+wine = read.csv(url("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data"), header = FALSE)
+names(wine) = c("class", "Alcohol","Malicacid","Ash","Alcalinityofash","Magnesium","Totalphenols","Flavanoids","Nonflavanoidphenols","Proanthocyanins","Colorintensity","Hue","OD280OD315ofdilutedwines","Proline")
+nrow(wine)
+summary(wine)
+split = createDataPartition(y=wine$class, p = 0.8, list=FALSE)
+wine_train = wine[split,]
+wine_train <- cbind(wine_train[2:14], class.ind(as.factor(wine_train$class)))
+existing_labels = names(wine_train)
+names(wine_train) = c(existing_labels[1:13],"l1","l2","l3")
+
+wine_test = wine[-split,]
+wine_test <- cbind(wine_test[2:14], class.ind(as.factor(wine_test$class)))
+existing_labels = names(wine_test)
+names(wine_test) <- c(existing_labels[1:13],"l1","l2","l3")
+```
+
+## Build Nueral Network
+```{r build_nueral_net, echo=TRUE}
+scl <- function(x) { (x - min(x))/(max(x) - min(x)) }
+wine_train[, 1:13] <- data.frame(lapply(wine_train[, 1:13], scl))
+head(wine_train)
+
+wine_test[, 1:13] <- data.frame(lapply(wine_test[, 1:13], scl))
+head(wine_test)
+
+wine_train_names <- names(wine_train)
+f <- as.formula(paste("l1 + l2 + l3 ~", paste(wine_train_names[!wine_train_names %in% c("l1","l2","l3")], collapse = " + ")))
+nn <- neuralnet(f,
+                data = wine_train,
+                hidden = c(13,10,3),
+                act.fct = "logistic",
+                linear.output = FALSE,
+                lifesign = "minimal")
+summary(nn)
+predictions.nn <- compute(nn, wine_test[, 1:13])
+predictions.nn_ <-predictions.nn$net.result
+
+
+original_values <- max.col(wine_test[, 14:16])
+original_values
+predictions.nn__ <- max.col(predictions.nn_)
+predictions.nn__
+mean(predictions.nn__ == original_values)
+```

@@ -1,0 +1,26 @@
+---
+title: "mlearn310_hw4_3_BigMemory"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(bigmemory)
+library ( bigtabulate )
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+## Load Netflix Data
+```{r load_netflix_data, echo=TRUE}
+options(bigmemory.allow.dimnames=TRUE)
+netflix_data = read.big.matrix("/Users/ravirajmulasa/Downloads/Netflix_DataSet/ds_clean", type="integer", header = FALSE, extraCols =NULL)
+colnames(netflix_data) <- c("user", "movie", "rating", "year")
+dim(netflix_data)
+colnames(netflix_data)
+```
+
+## Basic R operations
+```{r 2_basic_operations, echo=TRUE}
+colmean(netflix_data)
+colrange(netflix_data)
+colvar(netflix_data)
+```

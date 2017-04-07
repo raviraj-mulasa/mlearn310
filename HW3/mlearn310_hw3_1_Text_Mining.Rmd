@@ -1,0 +1,115 @@
+---
+title: "mlearn310_hw3_1_Text_Mining"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+library(tm)
+library(SnowballC)
+library(ggplot2)
+library(wordcloud)
+library(cluster)
+library(fpc)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+```
+
+## Load Data
+```{r load_data, echo=TRUE}
+dir_src = DirSource(directory = "/Users/ravirajmulasa/Documents/Certificate_in_MachineLearning/Advanced_Machine_Learning/Lecture_5/textmining",encoding = "UTF-8",pattern = ".*.txt",recursive = TRUE,ignore.case = FALSE,mode = "text")
+docs = Corpus(dir_src)
+```
+
+### Explore your data
+```{r explore_data, echo=TRUE}
+docs <- tm_map(docs, removePunctuation)
+for(j in seq(docs))   {   
+     docs[[j]] <- gsub("/", " ", docs[[j]])   
+     docs[[j]] <- gsub("@", " ", docs[[j]])   
+     docs[[j]] <- gsub("\\|", " ", docs[[j]])   
+}
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, tolower)
+docs <- tm_map(docs, removeWords, stopwords("english"))
+docs <- tm_map(docs, removeWords, c("department", "email"))
+docs <- tm_map(docs, stemDocument)
+docs <- tm_map(docs, stripWhitespace)
+docs <- tm_map(docs, PlainTextDocument)
+doc_term_matrix <- DocumentTermMatrix(docs)
+term_doc_matrix = TermDocumentMatrix(docs)
+dtm = as.matrix(doc_term_matrix)
+freq <- colSums(dtm)
+length(freq)
+ord <- order(freq)
+dtms <- removeSparseTerms(doc_term_matrix, 0.1)
+```
+
+#### Word Frequency
+
+##### Most and Least frequently occurring words.
+```{r most_freq_words, echo=TRUE}
+freq[head(ord)]
+freq[tail(ord)]
+```
+
+#####  Frequency of frequencies.
+```{r freq_words, echo=TRUE}
+head(table(freq), 20)
+tail(table(freq), 20)
+```
+
+#### Plot Word Frequencies
+```{r plot_word_freqs, echo=TRUE}
+wf <- data.frame(word=names(freq), freq=freq)
+p <- ggplot(subset(wf, freq>50), aes(word, freq))    
+p <- p + geom_bar(stat="identity")   
+p <- p + theme(axis.text.x=element_text(angle=45, hjust=1))   
+p   
+```
+
+### Relationships between Terms
+#### Term Correlations
+```{r term_correlation, echo=TRUE}
+findAssocs(doc_term_matrix, c("problem" , "approach"), corlimit=0.6)
+findAssocs(doc_term_matrix, c("admission" , "collages"), corlimit=0.98)
+```
+
+#### Word Clouds!
+```{r word_cloud, echo=TRUE}
+set.seed(142)
+wordcloud(names(freq), freq, min.freq=25)
+set.seed(142)   
+dark2 <- brewer.pal(6, "Dark2")   
+wordcloud(names(freq), freq, max.words=100, rot.per=0.2, colors=dark2)   
+```
+
+### Clustering by Term Similarity
+```{r clustering_by_similarity, echo=TRUE}
+dtmss <- removeSparseTerms(doc_term_matrix, 0.15)
+inspect(dtmss)
+```
+
+#### Hierarchal Clustering
+```{r hierarchal_clustering, echo=TRUE}
+d <- dist(t(dtmss), method="euclidian")
+fit <- hclust(d=d, method="ward")
+fit
+plot(fit, hang=-1)
+fit <- hclust(d=d, method="ward.D")
+fit
+plot(fit, hang=-1)
+plot.new()
+plot(fit, hang=-1)
+groups <- cutree(fit, k=5)
+rect.hclust(fit, k=5, border="red")
+
+```
+
+#### K-means clustering
+```{r k_means_clustering, echo=TRUE}
+d <- dist(t(dtmss), method="euclidian")   
+kfit <- kmeans(d, 2)   
+clusplot(as.matrix(d), kfit$cluster, color=T, shade=T, labels=2, lines=0)
+kfit <- kmeans(d, 3)   
+clusplot(as.matrix(d), kfit$cluster, color=T, shade=T, labels=2, lines=0)
+```
